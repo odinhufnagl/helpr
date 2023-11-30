@@ -4,16 +4,14 @@ import re
 from tkinter import Scale
 from typing import Any, List, Optional
 from uu import Error
-
 from setuptools import Require
-from scheduling.classgroup.base import ClassGroup
-from scheduling.classroom.base import ClassRoom
-from scheduling.event.base import BaseEvent
+from src.models.classgroup.base import ClassGroup
 from common.date import TimeInterval
-from scheduling.schedule.base import BaseSchedule
-from scheduling.school.base import BaseSchool
-from scheduling.teachers.base import BaseTeacher
-
+from src.models.classroom.base import ClassRoom
+from src.models.event.base import BaseEvent
+from src.models.school.base import BaseSchool
+from src.schedule.base import BaseSchedule
+from src.models.teacher.base import BaseTeacher
 
 #TODO: better structure so it is easy to create new requirements
 
@@ -30,12 +28,15 @@ class PriorityScale:
     
     def is_in_range(self, value):
         return min <= value or value <= max
-    
+
 class BaseRequirement:
     PRIORITY_MAX = 100
     PRIORITY_MIN = 0
     priority_scale = PriorityScale(PRIORITY_MIN,PRIORITY_MAX)
     priority: int
+    
+    def from_model(self, model) -> 'BaseRequirement':
+       raise NotImplementedError()
      
     def __init__(self, prio) -> None:
         self.set_priority(prio)
@@ -53,13 +54,18 @@ class BaseRequirement:
     
 @dataclass
 class TeacherRequirement(BaseRequirement):
-    teacher: BaseTeacher
+    teacher: Optional[BaseTeacher]
+    teacher_id: int
 @dataclass
 class ClassGroupRequirement(BaseRequirement):
-    class_group: ClassGroup
+    class_group: Optional[ClassGroup]
+    class_group_id: int
+
 @dataclass
 class ClassRoomRequirement(BaseRequirement):
-    class_room: ClassRoom
+    class_room: Optional[ClassRoom]
+    class_room_id: int    
+    
 @dataclass
 class TeacherEventRequirement(TeacherRequirement):
     event: BaseEvent
@@ -69,4 +75,3 @@ class ClassGroupEventRequirement(ClassGroupRequirement):
   
 class SchoolRequirement(BaseRequirement):
     school: BaseSchool
-
