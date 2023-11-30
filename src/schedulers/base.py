@@ -3,11 +3,11 @@
 
 from dataclasses import dataclass
 from typing import List, Optional
-from scheduling.classgroup.base import ClassGroup
-from scheduling.classroom.base import ClassRoom
-from scheduling.requirement.base import BaseRequirement, ClassGroupEventRequirement, TeacherEventRequirement, TeacherRequirement
-from scheduling.schedule.base import BaseSchedule, ClassGroupSchedule, ClassRoomSchedule, TeacherSchedule
-from scheduling.teachers.base import BaseTeacher
+from models.classgroup.base import ClassGroup
+from models.classroom.base import ClassRoom
+from requirement.base import BaseRequirement, ClassGroupEventRequirement, TeacherEventRequirement, TeacherRequirement
+from schedule.base import BaseSchedule, ClassGroupSchedule, ClassRoomSchedule, TeacherSchedule
+from src.models.teacher.base import BaseTeacher
 
 @dataclass
 class BaseFeedback:

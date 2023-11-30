@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from scheduling.classroom.base import ClassRoom
-from scheduling.event.base import BaseEvent, ClassGroupsEvent, ClassRoomsEvent, Lecture, TeachersEvent
-from scheduling.classgroup.base import ClassGroup
+from models.classroom.base import ClassRoom
+from models.event.base import BaseEvent, ClassGroupsEvent, ClassRoomsEvent, Lecture, TeachersEvent
+from models.classgroup.base import ClassGroup
 from typing import List
 from prettytable import PrettyTable
-from scheduling.teachers.base import BaseTeacher
+from src.models.teacher.base import BaseTeacher
 
 @dataclass
 class BaseSchedule:

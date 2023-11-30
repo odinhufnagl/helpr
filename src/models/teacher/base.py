@@ -2,7 +2,8 @@
 
 
 from dataclasses import dataclass
-from scheduling.course.base import BaseCourse
+
+from src.models.course.base import BaseCourse
 from typing import List
 
 @dataclass

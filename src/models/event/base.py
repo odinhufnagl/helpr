@@ -2,13 +2,12 @@
 
 from dataclasses import dataclass
 from typing import List
-
-from scheduling.event.type import EventType
-from scheduling.classgroup.base import ClassGroup
-from scheduling.classroom.base import ClassRoom
-from scheduling.course.base import BaseCourse
-from scheduling.school.base import BaseSchool
-from scheduling.teachers.base import BaseTeacher
+from src.models.classgroup.base import ClassGroup
+from src.models.classroom.base import ClassRoom
+from src.models.course.base import BaseCourse
+from src.models.event.type import EventType
+from src.models.school.base import BaseSchool
+from src.models.teacher.base import BaseTeacher
 from common.date import  TimeInterval
 
 @dataclass

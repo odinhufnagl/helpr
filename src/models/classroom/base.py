@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from scheduling.school.base import BaseSchool
-
+from src.models.school.base import BaseSchool
 
 @dataclass
 class ClassRoom:
