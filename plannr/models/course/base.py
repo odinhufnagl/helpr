@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from models import BaseSchool
+from models.school import BaseSchool
 
 @dataclass
 class BaseCourse:

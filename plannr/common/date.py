@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-import datetime
+from datetime import datetime
 
 @dataclass
 class TimeInterval:
-    start_time: datetime.time
-    end_time: datetime.time
+    start_time: datetime
+    end_time: datetime
