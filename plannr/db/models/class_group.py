@@ -1,14 +1,11 @@
-import datetime
+from datetime import datetime
 from typing import Optional
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import declarative_base, Mapped
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base, Mapped, mapped_column, relationship
 from .util import Base, id_column, created_at_column, updated_at_column
-from sqlalchemy.orm import mapped_column
-from datetime import datetime
 
-class DBClassRoom(Base):
-    __tablename__ = "class_room"
+class DBClassGroup(Base):
+    __tablename__ = "class_group"
     id: Mapped[int] = id_column()
     created_at: Mapped[datetime] = created_at_column()
     updated_at: Mapped[datetime] = updated_at_column()
