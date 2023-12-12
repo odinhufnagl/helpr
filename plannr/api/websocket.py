@@ -6,10 +6,13 @@ import uvicorn
 import os
 import db
 from services.database import update as db_update
+from socket_components.manager import CustomRedisManager
+from urllib.parse import parse_qs
 load_dotenv()
 #TODO: env variables
-mgr = socketio.AsyncRedisManager(os.environ['SOCKET_MESSAGE_QUEUE'])
+mgr = CustomRedisManager(url=os.environ['SOCKET_MESSAGE_QUEUE'])
 sio = socketio.AsyncServer(client_manager=mgr, logger=True, async_mode='asgi')
+
 app = ASGIApp(sio)
 from logger import logger
 
@@ -20,11 +23,18 @@ async def message():
 
 @sio.event
 async def connect(sid, environ):
-    logger.info(f"Client {sid} connected")
+    query_params = parse_qs(environ['QUERY_STRING'])
+    auth_token = query_params.get('auth', [None])[0]
+    #TODO: this should instead be like user_id = decode_token(auth_token)
+    user_id = auth_token  
+    await sio.enter_room(sid=sid, room=sid)
+    await mgr.save_session(sid, user_id)
 
 @sio.event
 async def disconnect(sid):
     logger.info(f"Client {sid} disconnected")
+    await sio.leave_room(sid=sid, room=sid)
+    await mgr.remove_session(sid)
 
 # You can define more events here for handling different messages
 
