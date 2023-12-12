@@ -1,16 +1,29 @@
 from time import sleep
 import socketio
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from socket_components.message import SocketServerMessageScheduleGenerated
+import argparse
+parser = argparse.ArgumentParser(description='Description of your script')
+parser.add_argument('--auth_token', help='Description of the option')
+
+# Parse the command-line arguments
+args = parser.parse_args()
+
+# Access the value of the 'option' argument
+auth_token_value = args.auth_token
 
 sio = socketio.Client()
-sio.connect("http://127.0.0.1:8081/")
+sio.connect(f"http://127.0.0.1:8081/?auth={auth_token_value}")
 
 @sio.on('connect')
 def on_connect():
     print('Connected to the server!')
 
-@sio.on('schedule_generated')
-def on_custom_event(data):
-    print('Received custom event:', data)
+@sio.on(SocketServerMessageScheduleGenerated.get_event())
+def on_custom_event(data: SocketServerMessageScheduleGenerated.Data):
+    print('Received socketservermessageschedulegenerated:', data)
 
 @sio.on('disconnect')
 def on_disconnect():

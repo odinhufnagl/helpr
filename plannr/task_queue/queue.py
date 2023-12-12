@@ -13,13 +13,10 @@ from celery import Celery
 
 load_dotenv()
 
-class Queue():
-   
-  def __init__(self):
-    self.api_url = os.environ['API_URL']
+class TaskQueue(BaseModel):
+  api_url: str
    
   async def push_generate_schedule(self, schedule_id: int) -> bool:
-    logger.info(f"hello worldddd {schedule_id}")
     #TODO: should not be forced to use CREATING.name, check other places aswell. Should just be constants
     await db_services.update(db.models.DBSchedule, schedule_id, {'state': db.models.DBSchedule.State.CREATING.name})
     
@@ -27,7 +24,8 @@ class Queue():
     
     return True
   
-
+  
+task_queue = TaskQueue(api_url=os.environ['API_URL'])
 
     
     

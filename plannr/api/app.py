@@ -1,6 +1,6 @@
 import logging
 from math import log
-from taskqueue import Queue
+
 from celery import Celery, shared_task
 from dotenv import load_dotenv
 from sqlalchemy import select
@@ -15,11 +15,12 @@ from pydantic import BaseModel
 from fastapi import BackgroundTasks, FastAPI
 from logger import logger
 from schedule.base import BaseSchedule
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 app = FastAPI()
 load_dotenv()
-queue = Queue()
+
 
 # TODO: these are just dummy routes
 

@@ -2,7 +2,6 @@
 import asyncio
 from dataclasses import dataclass
 from optparse import Option
-from taskqueue.queue import Queue
 from time import sleep
 from typing import List, Optional
 from uu import Error
@@ -18,8 +17,8 @@ from schedulers.base import DumbScheduler
 from sqlalchemy import select
 from pydantic import BaseModel
 from logger import logger
+from task_queue import task_queue
 
-queue = Queue()
 
 class BaseFilter:
     pass
@@ -60,7 +59,7 @@ class CoalitionScheduleController(BaseModel, BaseScheduleController):
     async def create_new_schedule(self) -> int:
         empty_schedule = BaseSchedule(None, self.coalition_id, BaseSchedule.State.CREATING, [])
         await empty_schedule.store_to_db()
-        await queue.push_generate_schedule(empty_schedule.schedule_id)
+        await task_queue.push_generate_schedule(empty_schedule.schedule_id)
         return empty_schedule.schedule_id
 
     def get_schedule(self, filters: List[BaseFilter]) -> BaseSchedule:
