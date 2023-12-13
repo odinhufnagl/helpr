@@ -4,6 +4,8 @@ from socketio import AsyncServer, ASGIApp
 import socketio
 import uvicorn
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import db
 from services.database import update as db_update
 from socket_components.manager import CustomRedisManager
@@ -49,6 +51,6 @@ async def background_task():
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8081, debug=True)
+    uvicorn.run(app, host="0.0.0.0", port=8081)
     logger.info("hello worls")
    # asyncio.run(start_socketio_server())
