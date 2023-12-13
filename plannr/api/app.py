@@ -1,25 +1,26 @@
 import logging
 from math import log
-
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from celery import Celery, shared_task
 from dotenv import load_dotenv
 from sqlalchemy import select
 import db
 from flask import Flask, render_template, request
 from fastapi import FastAPI, Request
-import sys
-import asyncio
-import os
 from controllers.schedule import CoalitionScheduleController
 from pydantic import BaseModel
 from fastapi import BackgroundTasks, FastAPI
 from logger import logger
 from schedule.base import BaseSchedule
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 
 app = FastAPI()
 load_dotenv()
+
+
 
 
 # TODO: these are just dummy routes
@@ -81,7 +82,7 @@ async def on_start():
 if __name__ == '__main__':
     import uvicorn
     port = int(os.environ.get('PORT', 8000))
-    uvicorn.run(app, host='0.0.0.0', port=port, debug=True, log_level="debug")
+    uvicorn.run(app, host='0.0.0.0', port=port, log_level="debug")
     
 
     

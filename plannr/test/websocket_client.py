@@ -15,7 +15,7 @@ args = parser.parse_args()
 auth_token_value = args.auth_token
 
 sio = socketio.Client()
-sio.connect(f"http://127.0.0.1:8081/?auth={auth_token_value}")
+sio.connect(f"http://0.0.0.0:8081/?auth={auth_token_value}")
 
 @sio.on('connect')
 def on_connect():
