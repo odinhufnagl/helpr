@@ -11,9 +11,12 @@ class JWTUserAuth(BaseModel):
         payload = {"user_id": user_id}
         return base_encode(payload=payload, algorithm=self.algorithm, key=self.secret)
     def decode(self, token) -> int | None:
-        jwt_object = base_decode(token, algorithms=[self.algorithm], key=self.secret)
-        if isinstance(jwt_object, dict) and 'user_id' in jwt_object.keys():
-            return int(jwt_object['user_id'])
+        try:
+            jwt_object = base_decode(token, algorithms=[self.algorithm], key=self.secret)
+            if isinstance(jwt_object, dict) and 'user_id' in jwt_object.keys():
+                return int(jwt_object['user_id'])
+        except:
+            return None
         
 #TODO: use better secret and store it in .env
 jwt_user_auth = JWTUserAuth(secret="bad secret")

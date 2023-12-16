@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from flask import jsonify
 from pydantic import BaseModel
 from sqlalchemy import JSON, select
+from plannr.api.error.base import ApiWrongEmailPasswordException
 from plannr.api.jwt_auth import jwt_user_auth
 import plannr.db as db
 from plannr.db.models.user import DBUser
@@ -40,7 +41,7 @@ async def sign_in(params: SignIn):
         await session.commit()
 
     if not user or not user.verify_password(params.password):
-        return JSONResponse(status_code=402, content="Wrong email or password")
+        raise ApiWrongEmailPasswordException()
         
     
     new_token = jwt_user_auth.encode(user.id)

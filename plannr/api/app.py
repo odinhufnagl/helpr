@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 import os
 import sys
+from plannr.api.error.base import ApiException, ApiNoTokenException, ApiNotValidTokenException, ApiWrongEmailPasswordException
 from plannr.api.jwt_auth import jwt_user_auth
 from plannr.api.middleware.auth import AuthMiddleware
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -12,7 +13,7 @@ from logger import logger
 from fastapi import Depends, FastAPI
 from fastapi import BackgroundTasks, FastAPI
 from .routers import about_router, admin_router, schedule_router, auth_router, check_auth_router
-
+from .error import all_api_exception_classes
 app_with_auth = FastAPI()
 load_dotenv()
 
@@ -31,6 +32,15 @@ app_no_auth.include_router(auth_router)
 app = FastAPI()
 app.mount(app=app_with_auth, path= "/app")
 app.mount(app=app_no_auth, path= "")
+
+
+
+for cls in all_api_exception_classes:
+  app.add_exception_handler(cls, cls.exception_handler)
+  app_with_auth.add_exception_handler(cls, cls.exception_handler)
+  app_no_auth.add_exception_handler(cls, cls.exception_handler)
+
+
 
 
 @app.on_event('startup')

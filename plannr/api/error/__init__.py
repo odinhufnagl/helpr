@@ -1,0 +1,2 @@
+from .base import ApiException, ApiNoTokenException, ApiNotValidTokenException, ApiWrongEmailPasswordException
+all_api_exception_classes = [ApiException, ApiNoTokenException, ApiNotValidTokenException, ApiWrongEmailPasswordException]
