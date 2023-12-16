@@ -19,5 +19,5 @@ class DBSchedule(Base):
     updated_at: Mapped[datetime] = updated_at_column()
     state: Mapped[State] = mapped_column(String, default=State.CREATING.name)
     coalition_id: Mapped[int] = mapped_column(ForeignKey('coalition.id'))
-    coalition: Mapped[DBCoalition] = relationship()  # type: ignore
+    coalition: Mapped['DBCoalition'] = relationship()  # type: ignore
     events: Mapped[List['DBEvent']] = relationship()  # type: ignore

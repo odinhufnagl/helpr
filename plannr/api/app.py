@@ -1,82 +1,41 @@
-import logging
-from math import log
+from contextlib import asynccontextmanager
 import os
 import sys
+from plannr.api.jwt_auth import jwt_user_auth
+from plannr.api.middleware.auth import AuthMiddleware
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from celery import Celery, shared_task
 from dotenv import load_dotenv
-from sqlalchemy import select
-import db
-from flask import Flask, render_template, request
-from fastapi import FastAPI, Request
-from controllers.schedule import CoalitionScheduleController
-from pydantic import BaseModel
-from fastapi import BackgroundTasks, FastAPI
+from sqlalchemy import select, text
+
 from logger import logger
-from schedule.base import BaseSchedule
+from fastapi import Depends, FastAPI
+from fastapi import BackgroundTasks, FastAPI
+from .routers import about_router, admin_router, schedule_router, auth_router, check_auth_router
 
-
-
-app = FastAPI()
+app_with_auth = FastAPI()
 load_dotenv()
 
 
 
+app_with_auth.add_middleware(AuthMiddleware)
+app_with_auth.include_router(about_router)
+app_with_auth.include_router(admin_router)
+app_with_auth.include_router(schedule_router)
+app_with_auth.include_router(check_auth_router)
 
-# TODO: these are just dummy routes
-
-
-class PostAdminRequest(BaseModel):
-    email: str
-    password: str
-
-@app.post('/admin')
-async def post_admin(request: PostAdminRequest):
-    print("req", request.json)
-    async with db.session() as session:
-        db_user = db.models.DBUser(
-            email=request.email, password=request.password)
-        session.add(db_user)
-        await session.flush()
-        db_admin = db.models.DBAdmin(user_id=db_user.id)
-        session.add(db_admin)
-        await session.commit()
-    return "Success"
+app_no_auth = FastAPI()
+app_no_auth.include_router(auth_router)
 
 
-# About page
-@app.get('/about')
-def about():
-    return 'Plannr is a system that helps teacher to create schedules'
-
-
-
-class CreateSheduleRequest(BaseModel):
-    admin_id: int
-    coalition_id: int
-
-@app.post("/create_schedule")
-async def create_schedule(request: CreateSheduleRequest):
-    schedule_controller = CoalitionScheduleController(coalition_id=request.coalition_id)
-    new_schedule_id = await schedule_controller.create_new_schedule()
-    return new_schedule_id
-   
-
-
-    
-@app.get("/schedule/{schedule_id}")
-async def get_schedule(schedule_id: int):
-    async with db.session() as session:
-        schedule = (await session.execute(select(db.models.DBSchedule).where(db.models.DBSchedule.id == schedule_id))).scalar_one_or_none()
-    return schedule
+app = FastAPI()
+app.mount(app=app_with_auth, path= "/app")
+app.mount(app=app_no_auth, path= "")
 
 
 @app.on_event('startup')
 async def on_start():
   load_dotenv()
-  await db.init()
-  
-
 
 
 if __name__ == '__main__':

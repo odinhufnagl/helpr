@@ -10,7 +10,6 @@ import db
 
 async def main():
     load_dotenv()
-    await db.init(True)
    
     async with db.session() as session:
 
