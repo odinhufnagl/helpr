@@ -40,12 +40,10 @@ class BaseSchedule:
                 db_schedule = (await session.execute(select(db.models.DBSchedule).where(db.models.DBSchedule.id == self.schedule_id))).scalar()
                 db_schedule.state = self.state.name
                 db_schedule.coalition_id = self.coalition_id
-
             else:
                 db_schedule = db.models.DBSchedule(
                     coalition_id=self.coalition_id, state=self.state.name)
                 session.add(db_schedule)
-
             await session.commit()
         self.schedule_id = db_schedule.id
 

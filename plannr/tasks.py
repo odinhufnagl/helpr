@@ -27,7 +27,6 @@ celery = Celery(os.environ['CELERY_MAIN_NAME'], broker=os.environ['CELERY_BROKER
 #TODO: what if there is already a generate on that schedule? Check the state in db, or finish the previous
 
 async def generate_schedule_async(schedule_id: int):
-    await db.init()
     generated_schedule = await CoalitionScheduleGenerator.generate_schedule(schedule_id=schedule_id, feedback=[])
     #TODO: read above about making this a better structure, for example now we have to match 'schedule_generated' in server and here, not good
     #send to correct client, this will require some type of storage where all clients are kept, so for example you can find them with their user_id,
@@ -39,6 +38,7 @@ async def generate_schedule_async(schedule_id: int):
     async with db.session() as session:
         schedule = (await session.execute(select(db.models.DBSchedule).where(db.models.DBSchedule.id == schedule_id).options(selectinload(db.models.DBSchedule.coalition).options(selectinload(db.models.DBCoalition.admins))))).scalar_one_or_none()
         print("admins", schedule.coalition.admins)
+        await session.commit()
     user_ids = list(map(lambda a: a.user_id, schedule.coalition.admins))
     await socket_message_queue.emit(SocketServerMessageScheduleGenerated(schedule_id=schedule_id), user_ids)
     print(generated_schedule)
@@ -51,6 +51,5 @@ def generate_schedule(schedule_id: int):
   
 @worker_init.connect
 async def startup(**kwargs):
-  await db.init()
-
+  pass
   

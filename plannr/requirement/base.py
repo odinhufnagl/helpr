@@ -11,7 +11,6 @@ from sqlalchemy import select
 from models import BaseTeacher, ClassGroup, BaseEvent, BaseSchool, ClassRoom
 from db.models.event import DBEvent
 from db.models.requirement import DBRequirement
-from db.engine import session
 from schedule import BaseSchedule
 import db
 

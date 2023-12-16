@@ -13,3 +13,4 @@ class DBCoalition(Base):
     name: Mapped[str] = mapped_column(String)
     schools: Mapped[List['DBSchool']] = relationship() #type: ignore
     admins: Mapped[List['DBAdmin']] = relationship('DBAdmin', secondary='admin_coalition') #type: ignore
+    schedules: Mapped[List['DBSchedule']] = relationship() #type: ignore
