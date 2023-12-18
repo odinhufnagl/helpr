@@ -1,0 +1,5 @@
+setup.py
+helpr.egg-info/PKG-INFO
+helpr.egg-info/SOURCES.txt
+helpr.egg-info/dependency_links.txt
+helpr.egg-info/top_level.txt

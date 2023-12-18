@@ -7,7 +7,7 @@ services:
       - "0.0.0.0:8000:8000"
     volumes:
       - .:/app
-    command: ["python", "-m", "plannr.api.app"]
+    command: ["python", "-m", "helpr.api.app"]
   websocket:
     build: .
     ports:
@@ -16,14 +16,14 @@ services:
       - "8081"
     volumes:
       - .:/app
-    command: ["python", "-m", "plannr.api.websocket"]
+    command: ["python", "-m", "helpr.api.websocket"]
   tasks:
     build: .
     ports:
       - "8082:5002"
     volumes:
       - .:/app
-    command: sh -c "cd plannr && celery -A tasks worker --loglevel=info"
+    command: sh -c "cd helpr && celery -A tasks worker --loglevel=info"
 
   redis-1:
     image: "redis:alpine"
@@ -49,4 +49,4 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=plannr
+      - POSTGRES_DB=helpr

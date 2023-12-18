@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 import sys
 from sqlalchemy import select
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../plannr')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../helpr')))
 
-from plannr.db.models.util import Base
+from helpr.db.models.util import Base
 
-from plannr.db.models import DBUser
+from helpr.db.models import DBUser
 from sqlalchemy.sql import text
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncEngine, AsyncSession, async_scoped_session
 
@@ -19,7 +19,7 @@ import os
 
 async def main():
     load_dotenv()
-    db_url = 'postgresql://postgres:postgres@127.0.0.1:5432/plannr'.replace('postgresql://', 'postgresql+asyncpg://')
+    db_url = 'postgresql://postgres:postgres@127.0.0.1:5432/helpr'.replace('postgresql://', 'postgresql+asyncpg://')
     engine = create_async_engine(db_url, echo=True, future=True)
     session = async_scoped_session(async_sessionmaker(autocommit=False,
                                          autoflush=False,

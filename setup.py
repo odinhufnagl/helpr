@@ -1,2 +1,2 @@
 from setuptools import setup
-setup(name='plannr')
+setup(name='helpr')
