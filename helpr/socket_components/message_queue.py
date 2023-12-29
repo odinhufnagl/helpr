@@ -31,7 +31,11 @@ class SocketMessageQueue():
     #TODO: pretty ugly and repetitive, the problem is probably connected to how we structure CustomRedisManager different session-lookups
     async def emit_to_client(self, server_msg: BaseSocketServerMessage, clients: List[str]):
             for client in clients:
+                logger.info("walla")
+                print("walla")
                 sids = await self.external_manager.get_client_sids(client)
+                logger.info(f"sids: {sids}")
+                print(f"sids: {sids}")
                 await self.emit(server_msg, sids)
                 
     async def emit_to_uid(self, server_msg: BaseSocketServerMessage, uids: List[str]):

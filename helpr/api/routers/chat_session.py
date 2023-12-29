@@ -64,6 +64,12 @@ class PostMessage(BaseModel):
     
 @router.post('/{chat_session_id}/message')
 async def post_message(chat_session_id: int, params: PostMessage, has_access = Depends(check_client_session)):
-    message = await message_service.create(dto.CreateMessage(text=params.text, chat_session_id=chat_session_id))
+    message = await message_service.create_user_message(dto.CreateUserMessage(text=params.text, chat_session_id=chat_session_id))
     await task_queue.push_generate_bot_message(chat_session_id)
     return message
+
+    
+"""@router.post('/{chat_session_id}/action_request_response_message')
+async def post_action_request_response_message(chat_session_id: int, params: PostMessage, has_access: Depends(check_client_session)):
+    message = await message_service.create_action_request_response_message(dto.Create)
+"""

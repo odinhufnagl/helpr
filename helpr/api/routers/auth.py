@@ -15,8 +15,8 @@ import json
 from sqlalchemy.ext.serializer import loads, dumps
 from sqlalchemy.orm import make_transient, selectinload
 from sqlalchemy import select
-
 from helpr.schemas.user import UserSchema
+
 router = APIRouter(prefix='/auth')
 
 class SignUp(BaseModel):

@@ -22,6 +22,9 @@ class BaseSocketServerMessage(BaseSocketMessage):
    # reciever_user_id: int
    pass
 
+
+
+#TODO: holy shit these look horrid
 class SocketServerMessageBotChat(BaseSocketServerMessage):
     chat_session_id: int
     text: str
@@ -35,3 +38,45 @@ class SocketServerMessageBotChat(BaseSocketServerMessage):
     @staticmethod
     def get_event():
         return "message_bot"
+
+class SocketServerMessageActionRequestChat(BaseSocketServerMessage):
+    text: str
+    chat_session_id: int
+    action_id: int
+    input: str
+
+    class Data(BaseModel):
+        text: str
+        chat_session_id: int
+        action_id: int
+        input: str
+    
+    def get_data(self) -> Data.__dict__:
+        return {'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'input': self.input}
+    
+    @staticmethod
+    def get_event():
+        return "message_action_request"
+    
+class SocketServerMessageActionResultChat(BaseSocketServerMessage):
+    text: str
+    chat_session_id: int
+    action_id: int
+    output: str
+
+    class Data(BaseModel):
+        text: str
+        chat_session_id: int
+        action_id: int
+        output: str
+    
+    def get_data(self) -> Data.__dict__:
+        return {'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'output': self.output}
+    
+    @staticmethod
+    def get_event():
+        return "message_action_result"
+    
+
+ 
+ 

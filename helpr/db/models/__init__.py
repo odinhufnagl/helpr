@@ -3,5 +3,12 @@ from .user_organization import DBUserOrganization
 from .user import DBUser
 from .chat_session import DBChatSession
 from .chat import DBChat
-from .message import DBMessage
+from .message import *
 from .agent import DBAgent
+from .index import DBIndex
+from .action import *
+from .action_run import DBActionRun
+from .chat_action import DBChatAction
+from .credential import DBCredential
+from .variable import DBVariable
+from .field import DBField
