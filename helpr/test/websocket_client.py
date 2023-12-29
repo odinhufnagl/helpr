@@ -3,7 +3,7 @@ import socketio
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from socket_components.message import SocketServerMessageBotChat
+from socket_components.message import SocketServerMessageActionRequestChat, SocketServerMessageActionResultChat, SocketServerMessageBotChat
 import argparse
 parser = argparse.ArgumentParser(description='Description of your script')
 parser.add_argument('--auth_token', help='Description of the option')
@@ -24,6 +24,15 @@ def on_connect():
 @sio.on(SocketServerMessageBotChat.get_event())
 def on_custom_event(data: SocketServerMessageBotChat.Data):
     print('Received socketservermessagesbotchat:', data)
+    
+@sio.on(SocketServerMessageActionRequestChat.get_event())
+def on_custom_event(data: SocketServerMessageActionRequestChat.Data):
+    print('Received socketservermessagesactionrequest:', data)
+
+@sio.on(SocketServerMessageActionResultChat.get_event())
+def on_custom_event(data: SocketServerMessageActionResultChat.Data):
+    print('Received socketservermessagesactionresult: ', data)
+
 
 @sio.on('disconnect')
 def on_disconnect():

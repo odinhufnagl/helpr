@@ -14,5 +14,6 @@ class DBAgent(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey("organization.id"))
     organization: Mapped['DBOrganization'] = relationship() #type: ignore
     #TODO: this should be its own table so it can be polymorphism like IndexLocationServer, or IndexLocationPath
-    index_location: Mapped[String] = mapped_column(String)
+    index_id: Mapped[int] = mapped_column(ForeignKey('index.id'))
+    index: Mapped['DBIndex'] = relationship() #type: ignore
     
