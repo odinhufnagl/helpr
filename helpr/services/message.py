@@ -5,7 +5,7 @@ from typing import List, Literal
 from helpr import db
 from helpr.db.models.message import DBActionRequestMessage, DBActionRequestResponseMessage, DBActionResultMessage, DBMessage, DBBotMessage, DBUserMessage
 from schemas.message import BotMessageSchema, MessageSchema, dto, BaseSchema, UserMessageSchema
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import with_polymorphic, joinedload, selectin_polymorphic, selectinload, make_transient
 from helpr.logger import logger
 
@@ -52,9 +52,15 @@ async def create_user_message(data: dto.CreateUserMessage) -> UserMessageSchema:
         await session.commit()
     return MessageSchema.from_model(m)
 
-async def get_messages(chat_session_id: int, offset: int = 0, limit: int = 100, order: Literal['desc', 'asc'] = 'asc') -> List[MessageSchema]:
+async def get_messages(chat_session_id: int, offset: int = 0, limit: int = 100, order: Literal['desc', 'asc'] = 'asc') -> tuple[List[MessageSchema], int]:
     async with db.session() as session:
-        messages = (await session.execute(select(DBMessage).options(selectin_polymorphic(DBMessage, [DBBotMessage, DBUserMessage, DBActionRequestMessage, DBActionRequestResponseMessage, DBActionResultMessage]), selectinload(DBActionResultMessage.action), selectinload(DBActionRequestMessage.action)).where(DBMessage.chat_session_id == chat_session_id).order_by(DBMessage.created_at.desc() if order == 'desc' else DBMessage.created_at.asc()).offset(offset).limit(limit))).scalars().all()
-
-    return list(map(lambda m: MessageSchema.from_model(m), messages))   
+        print("limit", limit, offset)
+        #TODO: simplify and centralize pagination
+        message_query = (select(DBMessage).options(selectin_polymorphic(DBMessage, [DBBotMessage, DBUserMessage, DBActionRequestMessage, DBActionRequestResponseMessage, DBActionResultMessage]), selectinload(DBActionResultMessage.action), selectinload(DBActionRequestMessage.action)).where(DBMessage.chat_session_id == chat_session_id).order_by(DBMessage.created_at.desc() if order == 'desc' else DBMessage.created_at.asc()).offset(offset).limit(limit))
+        count_query = select(func.count()).select_from(message_query.subquery())
+        count = (await session.execute(count_query)).scalar()
+        messages = (await session.execute(message_query)).scalars().all()
+        await session.commit()
+    return list(map(lambda m: MessageSchema.from_model(m), messages)), count
+    
     

@@ -60,14 +60,14 @@ async def connect(chat_id: int, request: Request):
         
 
 @router.get('/{chat_id}/messages')
-async def get_messages(chat_id: int, request: Request, has_access = Depends(check_client_session)):
+async def get_messages(chat_id: int, request: Request,  limit: int, offset: int, has_access = Depends(check_client_session)):
     request = ClientAuthRequest.from_request(request)
     #TODO: should be middleware
     chat_session_id_from_token = jwt_client_auth.decode(request.access_token)
     logger.info(f"chat-session: {chat_session_id_from_token}")
-    messages = await message_service.get_messages(chat_session_id_from_token) #TODO: fix pagination
+    messages, count = await message_service.get_messages(chat_session_id_from_token, limit=limit, offset=offset*limit) #TODO: fix pagination, better distincion between page and offset
     logger.info(f"messages: {messages}")
-    return {'count': len(messages), 'rows': messages} #TODO: this is wrong, should not be len(messages)
+    return {'count': count, 'rows': messages} #TODO: this is wrong, should not be len(messages)
 
 class PostMessage(BaseModel):
     text: str
