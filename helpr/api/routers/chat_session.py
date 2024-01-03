@@ -24,7 +24,6 @@ class PostChatSession(BaseModel):
     chat_id: int
     
 
-
 async def check_client_session(request: Request, chat_session_id: int):
         chat_session_id_in_path = chat_session_id
         request = ClientAuthRequest.from_request(request)
@@ -62,13 +61,19 @@ async def get_chat_session(chat_session_id: int, has_access = Depends(check_clie
 class PostMessage(BaseModel):
     text: str
     
-@router.post('/{chat_session_id}/message')
+@router.post('/{chat_session_id}/messages')
 async def post_message(chat_session_id: int, params: PostMessage, has_access = Depends(check_client_session)):
     message = await message_service.create_user_message(dto.CreateUserMessage(text=params.text, chat_session_id=chat_session_id))
     await task_queue.push_generate_bot_message(chat_session_id)
     return message
 
+@router.get('/{chat_session_id}/messages')
+async def get_messages(chat_session_id: int, has_access = Depends(check_client_session)):
+    messages = await message_service.get_messages(chat_session_id) #TODO: fix pagination
+    return messages
+
     
+                                                                            
 """@router.post('/{chat_session_id}/action_request_response_message')
 async def post_action_request_response_message(chat_session_id: int, params: PostMessage, has_access: Depends(check_client_session)):
     message = await message_service.create_action_request_response_message(dto.Create)

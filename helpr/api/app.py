@@ -14,8 +14,10 @@ from logger import logger
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi import BackgroundTasks, FastAPI
 from fastapi.security import OAuth2PasswordBearer
-from .routers import about_router, auth_router, check_auth_router, organization_router, chat_session_router
+from .routers import about_router, auth_router, check_auth_router, organization_router, chat_session_router, chat_router
 from .error import all_api_exception_classes
+from fastapi.middleware.cors import CORSMiddleware
+
 app_with_auth = FastAPI()
 load_dotenv()
 
@@ -31,11 +33,27 @@ app_no_auth = FastAPI()
 app_no_auth.include_router(auth_router)
 #TODO: this has to be looked at, there has to be some type of auth here with a temporary cookie/session
 app_no_auth.include_router(chat_session_router)
+app_no_auth.include_router(chat_router)
 
 
 app = FastAPI()
+
 app.mount(app=app_with_auth, path= "/app")
 app.mount(app=app_no_auth, path= "")
+
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 app.add_exception_handler(Exception, ApiException.exception_handler)
@@ -46,9 +64,6 @@ for cls in all_api_exception_classes:
   app.add_exception_handler(cls, cls.exception_handler)
   app_with_auth.add_exception_handler(cls, cls.exception_handler)
   app_no_auth.add_exception_handler(cls, cls.exception_handler)
-
-
-
 
 @app.on_event('startup')
 async def on_start():

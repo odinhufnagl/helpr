@@ -7,7 +7,7 @@ from sqlalchemy import desc, select
 from sqlalchemy.orm import selectinload
 from helpr import db
 from logger import logger
-
+from llama_index.tools import FunctionTool
 
 from helpr.schemas.action import ActionSchema
 
@@ -52,6 +52,8 @@ class BaseAction(BaseModel, ABC):
         if schema.type == ActionSchema.Type.ADD:
             logger.info(f"{schema.name}, {schema.description}, {schema.feedback_required}")
             return AddAction(id=schema.id, name=schema.name, description=schema.description, feedback_required=schema.feedback_required)
+    def to_tool(self):
+        return (self.run, self.empty_run, self.name, self.description)
 
 
 # These are actions that the companies should be able to add so they have to be very prototyped

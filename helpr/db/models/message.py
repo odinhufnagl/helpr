@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 from re import S
-import string
 from typing import List, Optional
 from click import Option
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String

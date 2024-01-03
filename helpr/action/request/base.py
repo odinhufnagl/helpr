@@ -45,3 +45,6 @@ class PostRequestAction(BaseRequestAction):
         description = f"{schema.description}. The input.data must be in the form: {json.dumps(schema.body_input_struct)}" #TODO: should be centralised somewhere else, ot atleast in another function or class
         logger.info(description)
         return PostRequestAction(id=schema.id, name=schema.name, feedback_required=schema.feedback_required, description=description, fields=BaseRequestAction.Fields(headers=schema.headers, url=schema.url,))
+    
+    
+        
