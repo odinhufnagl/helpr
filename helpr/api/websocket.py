@@ -15,7 +15,7 @@ import json
 load_dotenv()
 #TODO: env variables
 mgr = CustomRedisManager(url=os.environ['SOCKET_MESSAGE_QUEUE'])
-sio = socketio.AsyncServer(client_manager=mgr, logger=True, async_mode='asgi')
+sio = socketio.AsyncServer(client_manager=mgr, logger=True, async_mode='asgi', cors_allowed_origins="*", engineio_logger=True)
 
 app = ASGIApp(sio)
 from logger import logger
@@ -26,8 +26,10 @@ async def message():
     logger.info("message arrived")
 
 @sio.event
-async def connect(sid, environ):
+async def connect(sid, environ, _):
     query_params = parse_qs(environ['QUERY_STRING'])
+    logger.info(f"sid: {sid}")
+    logger.info(f"environ: {environ}")
     auth_token = query_params.get('auth', [None])[0]
     value = jwt_auth.decode(auth_token)
     logger.info(auth_token)

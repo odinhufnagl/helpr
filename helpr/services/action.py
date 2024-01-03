@@ -13,7 +13,7 @@ from helpr.logger import logger
 async def get_actions_in_chat(chat_id: int) -> List[ActionSchema]:
     async with db.session() as session:
         actions = (await session.execute(
-            select(DBAction).options(selectin_polymorphic(DBAction, [DBAddAction, DBPostRequestAction])).options(joinedload(DBPostRequestAction.headers_field), joinedload(DBPostRequestAction.url_field)).join(DBChatAction).filter( #TODO: joinedload('*') bad
+            select(DBAction).options(selectin_polymorphic(DBAction, [DBAddAction, DBPostRequestAction])).options(joinedload(DBPostRequestAction.headers_field), joinedload(DBPostRequestAction.url_field)).join(DBChatAction).filter(
                 DBChatAction.chat_id == chat_id)
         )).unique().scalars().all()
         await session.commit()

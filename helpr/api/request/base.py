@@ -26,5 +26,8 @@ class AuthedRequest(BaseRequest):
         super().__init__(*args, **kwargs)
         self.user_id = self.state.user_id
 
-    
-    
+class ClientAuthedRequest(BaseRequest):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.chat_session_id = self.state.chat_session_id
+
