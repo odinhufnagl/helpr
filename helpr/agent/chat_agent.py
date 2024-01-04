@@ -228,7 +228,8 @@ class MessageSchemaCollection(BaseModel):
 
     async def fetch_next(self):
         # TODO: check the ordering here
-        new_messages = (await message_service.get_messages(self.chat_session_id, order=self.order, limit=self.limit, offset=self.offset))[::-1]
+        new_messages, count = (await message_service.get_messages(self.chat_session_id, order=self.order, limit=self.limit, offset=self.offset))
+        new_messages = new_messages[::-1]
         new_offset = self.offset + self.limit
         self.offset = new_offset
         # TODO: check the ordering here

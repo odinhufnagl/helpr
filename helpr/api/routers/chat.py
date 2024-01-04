@@ -64,8 +64,9 @@ async def get_messages(chat_id: int, request: Request,  limit: int, offset: int,
     request = ClientAuthRequest.from_request(request)
     #TODO: should be middleware
     chat_session_id_from_token = jwt_client_auth.decode(request.access_token)
+    logger.info(f"whyy: {request.access_token}")
     logger.info(f"chat-session: {chat_session_id_from_token}")
-    messages, count = await message_service.get_messages(chat_session_id_from_token, limit=limit, offset=offset*limit) #TODO: fix pagination, better distincion between page and offset
+    messages, count = await message_service.get_messages(chat_session_id_from_token, limit=limit, offset=offset*limit, order='desc') #TODO: fix pagination, better distincion between page and offset
     logger.info(f"messages: {messages}")
     return {'count': count, 'rows': messages} #TODO: this is wrong, should not be len(messages)
 
