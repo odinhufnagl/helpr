@@ -26,6 +26,7 @@ class BaseSocketServerMessage(BaseSocketMessage):
 
 #TODO: holy shit these look horrid
 class SocketServerMessageBotChat(BaseSocketServerMessage):
+    id: int
     chat_session_id: int
     text: str
     class Data(BaseModel):
@@ -33,13 +34,14 @@ class SocketServerMessageBotChat(BaseSocketServerMessage):
         text: str
     
     def get_data(self) -> Data.__dict__:
-        return {'chat_session_id': self.chat_session_id, 'text': self.text}
+        return {'id': self.id, 'chat_session_id': self.chat_session_id, 'text': self.text}
     
     @staticmethod
     def get_event():
         return "message_bot"
 
 class SocketServerMessageActionRequestChat(BaseSocketServerMessage):
+    id: int
     text: str
     chat_session_id: int
     action_id: int
@@ -52,13 +54,14 @@ class SocketServerMessageActionRequestChat(BaseSocketServerMessage):
         input: str
     
     def get_data(self) -> Data.__dict__:
-        return {'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'input': self.input}
+        return {'id': self.id, 'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'input': self.input}
     
     @staticmethod
     def get_event():
         return "message_action_request"
     
 class SocketServerMessageActionResultChat(BaseSocketServerMessage):
+    id: int
     text: str
     chat_session_id: int
     action_id: int
@@ -71,7 +74,7 @@ class SocketServerMessageActionResultChat(BaseSocketServerMessage):
         output: str
     
     def get_data(self) -> Data.__dict__:
-        return {'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'output': self.output}
+        return {'id': self.id, 'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'output': self.output}
     
     @staticmethod
     def get_event():

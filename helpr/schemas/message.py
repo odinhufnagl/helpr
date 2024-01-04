@@ -69,7 +69,7 @@ class BotMessageSchema(MessageSchema):
     def from_model(model: DBBotMessage):
         return BotMessageSchema(id=model.id, text=model.text, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at)
     def to_socket_message(self):
-        return SocketServerMessageBotChat(chat_session_id=self.chat_session_id, text=self.text)
+        return SocketServerMessageBotChat(id=self.id, chat_session_id=self.chat_session_id, text=self.text)
 
 class SystemMessageSchema(MessageSchema):
     type: str = MessageSchema.Type.SYSTEM_MESSAGE
@@ -85,7 +85,7 @@ class ActionRequestMessageSchema(MessageSchema):
     def from_model(model: DBActionRequestMessage):
           return ActionRequestMessageSchema(id=model.id, text=model.text, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at, action_id=model.action_id, input=model.input, action=ActionSchema.from_model(model.action) if model.action else None)
     def to_socket_message(self):
-        return SocketServerMessageActionRequestChat(chat_session_id=self.chat_session_id, text=self.text, input=str(self.input), action_id=self.action_id)
+        return SocketServerMessageActionRequestChat(id=self.id, chat_session_id=self.chat_session_id, text=self.text, input=str(self.input), action_id=self.action_id)
 
       
 #TODO: should store input aswell right?
@@ -97,7 +97,7 @@ class ActionResultMessageSchema(MessageSchema):
     def from_model(model: DBActionResultMessage):
           return ActionResultMessageSchema(id=model.id, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at, action_id=model.action_id, output=model.output, text=model.text, action=ActionSchema.from_model(model.action) if model.action else None)
     def to_socket_message(self):
-        return SocketServerMessageActionResultChat(chat_session_id=self.chat_session_id, text=self.text, action_id=self.action_id, output=self.output)
+        return SocketServerMessageActionResultChat(id=self.id, chat_session_id=self.chat_session_id, text=self.text, action_id=self.action_id, output=self.output)
 
 
 class ActionRequestResponseMessageSchema(MessageSchema):

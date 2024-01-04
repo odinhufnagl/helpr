@@ -32,7 +32,7 @@ class SocketMessageQueue():
     async def emit_to_client(self, server_msg: BaseSocketServerMessage, clients: List[str]):
             for client in clients:
                 logger.info("walla")
-                print("walla")
+                print("walla", client)
                 sids = await self.external_manager.get_client_sids(client)
                 logger.info(f"sids: {sids}")
                 print(f"sids: {sids}")
