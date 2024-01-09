@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Sequence
+
+from typing import Any, ClassVar, Dict, List, Sequence, Type, TypeVar
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy import update as update_sql
@@ -15,7 +16,9 @@ async def update(model: Any, id: int, data: Dict):
     )
     await session.commit()
 
-async def get(model: Any, id: int):
+T = TypeVar("T")
+
+async def get(model: T, id: int) -> T:
   async with db.session() as session:
     m = (await session.execute(
       select(model)
