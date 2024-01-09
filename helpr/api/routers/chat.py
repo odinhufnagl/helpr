@@ -104,7 +104,12 @@ async def post_action_request_response_message(chat_id: int, params: PostActionR
     #TODO: should be middleware
     chat_session_id_from_token = jwt_client_auth.decode(request.access_token)
     logger.info(f"chat-session: {chat_session_id_from_token}")
-    response = await action_request_service.create_response(action_request_dto.CreateActionResponse(feedback=params.feedback, approved=params.approved, next_action_request_id=None, action_run_id=None, action_request_id=params.action_request_id))
+    if await action_request_service.request_has_response(params.action_request_id): #There is already a response to the action
+        logger.info("response already exists")
+        return
+    response = await action_request_service.create_new_response(action_request_dto.CreateActionResponse(feedback=params.feedback, approved=params.approved, next_action_request_id=None, action_run_id=None, action_request_id=params.action_request_id))
+    if not response:
+        return
     logger.info("sucess!!")
     if response.feedback:
         logger.info("handle feedback")
