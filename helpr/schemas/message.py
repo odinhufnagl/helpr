@@ -3,11 +3,12 @@ from datetime import datetime
 from typing import List, Optional
 from click import Option
 from pydantic import BaseModel
-from helpr.db.models.message import DBActionRequestMessage, DBBotMessage, DBMessage, DBActionRequestResponseMessage, DBSystemMessage, DBActionResultMessage
-from helpr.socket_components.message import SocketServerMessageActionRequestChat, SocketServerMessageActionResultChat, SocketServerMessageBotChat
+from helpr.db.models.message import DBActionRequestMessage, DBBotMessage, DBMessage, DBSystemMessage, DBActionResultMessage
 from helpr.schemas.action import ActionSchema
 from sqlalchemy.orm import make_transient, make_transient_to_detached
+from helpr.schemas.action_request import ActionRequestSchema
 from helpr.schemas.base import BaseSchema
+
 
 
 class MessageSchema(BaseSchema):
@@ -36,6 +37,8 @@ class MessageSchema(BaseSchema):
             return ActionRequestMessageSchema.from_model(model)
         if model.type == DBMessage.Type.ACTION_RESULT_MESSAGE:
             return ActionResultMessageSchema.from_model(model)
+        """ if model.type == DBMessage.Type.ACTION_REQUEST_RESPONSE_MESSAGE:
+            return ActionRequestResponseMessageSchema.from_model(model)"""
 
 
 class dto:
@@ -50,26 +53,20 @@ class dto:
         pass
     
     class CreateActionRequestMessage(CreateMessage):
-        input: str
-        action_id: int
+        action_request_id: int
         
     class CreateActionResultMessage(CreateMessage):
         output: str
         action_id: int
         
-    class CreateActionRequestResponseMessage(CreateMessage):
-        feedback: str
-        approved: bool
-        request_message_id: int
-
-
 class BotMessageSchema(MessageSchema):
     text: str
     type: str = MessageSchema.Type.BOT_MESSAGE
     def from_model(model: DBBotMessage):
         return BotMessageSchema(id=model.id, text=model.text, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at)
     def to_socket_message(self):
-        return SocketServerMessageBotChat(id=self.id, chat_session_id=self.chat_session_id, text=self.text)
+        from helpr.socket_components.message import SocketServerMessageBotChat
+        return SocketServerMessageBotChat(message=self)
 
 class SystemMessageSchema(MessageSchema):
     type: str = MessageSchema.Type.SYSTEM_MESSAGE
@@ -78,14 +75,14 @@ class SystemMessageSchema(MessageSchema):
       
 
 class ActionRequestMessageSchema(MessageSchema):
-    action_id: int
-    action: Optional[ActionSchema]
-    input: str
+    action_request_id: int
+    action_request: Optional[ActionRequestSchema]
     type: str = MessageSchema.Type.ACTION_REQUEST_MESSAGE
     def from_model(model: DBActionRequestMessage):
-          return ActionRequestMessageSchema(id=model.id, text=model.text, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at, action_id=model.action_id, input=model.input, action=ActionSchema.from_model(model.action) if model.action else None)
+          return ActionRequestMessageSchema(id=model.id, chat_session_id=model.chat_session_id, action_request_id=model.action_request_id, action_request=ActionRequestSchema.from_model(model.action_request) if model.action_request else None, text=None, created_at=model.created_at, updated_at=model.updated_at)
     def to_socket_message(self):
-        return SocketServerMessageActionRequestChat(id=self.id, chat_session_id=self.chat_session_id, text=self.text, input=str(self.input), action_id=self.action_id)
+        from helpr.socket_components.message import SocketServerMessageActionRequestChat
+        return SocketServerMessageActionRequestChat(message=self)
 
       
 #TODO: should store input aswell right?
@@ -97,9 +94,10 @@ class ActionResultMessageSchema(MessageSchema):
     def from_model(model: DBActionResultMessage):
           return ActionResultMessageSchema(id=model.id, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at, action_id=model.action_id, output=model.output, text=model.text, action=ActionSchema.from_model(model.action) if model.action else None)
     def to_socket_message(self):
-        return SocketServerMessageActionResultChat(id=self.id, chat_session_id=self.chat_session_id, text=self.text, action_id=self.action_id, output=self.output)
+        from helpr.socket_components.message import SocketServerMessageActionResultChat
+        return SocketServerMessageActionResultChat(message=self)
 
-
+"""
 class ActionRequestResponseMessageSchema(MessageSchema):
     request_message_id: int
     feedback: Optional[str] = None
@@ -107,7 +105,10 @@ class ActionRequestResponseMessageSchema(MessageSchema):
     type: str = MessageSchema.Type.ACTION_REQUEST_RESPONSE_MESSAGE
     def from_model(model: DBActionRequestResponseMessage):
           return ActionRequestResponseMessageSchema(id=model.id, text=model.text, chat_session_id=model.chat_session_id, created_at=model.created_at, updated_at=model.updated_at, request_message_id=model.request_message_id, feedback=model.feedback, approved=model.approved)
-
+    def to_socket_message(self):
+        from helpr.socket_components.message import SocketServerMessageActionRequestResponseChat
+        return SocketServerMessageActionRequestResponseChat(message=self)
+"""
 
 class UserMessageSchema(MessageSchema):
     text: str

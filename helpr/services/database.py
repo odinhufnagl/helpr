@@ -14,3 +14,13 @@ async def update(model: Any, id: int, data: Dict):
         .values(data)
     )
     await session.commit()
+
+async def get(model: Any, id: int):
+  async with db.session() as session:
+    m = (await session.execute(
+      select(model)
+        .where(model.id == id)
+    )).scalar_one_or_none()
+    await session.commit()
+    return m
+  

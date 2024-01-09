@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import string
 from typing import List, Optional
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, ARRAY
 from sqlalchemy.orm import declarative_base, Mapped, relationship, mapped_column
 from .util import Base, id_column, created_at_column, updated_at_column
 

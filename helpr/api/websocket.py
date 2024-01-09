@@ -1,7 +1,12 @@
 import asyncio
+from copy import deepcopy
+import datetime
 from dotenv import load_dotenv
+import fastapi
+import flask
 from socketio import AsyncServer, ASGIApp
 import socketio
+import sqlalchemy
 import uvicorn
 import os
 import sys
@@ -15,7 +20,10 @@ import json
 load_dotenv()
 #TODO: env variables
 mgr = CustomRedisManager(url=os.environ['SOCKET_MESSAGE_QUEUE'])
-sio = socketio.AsyncServer(client_manager=mgr, logger=True, async_mode='asgi', cors_allowed_origins="*", engineio_logger=True)
+
+
+
+sio = socketio.AsyncServer(client_manager=mgr, logger=True, async_mode='asgi', cors_allowed_origins="*", engineio_logger=True,json=flask.json )
 
 app = ASGIApp(sio)
 from logger import logger

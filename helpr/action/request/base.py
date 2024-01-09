@@ -34,7 +34,9 @@ class PostRequestAction(BaseRequestAction):
     
     
     async def run(self, data: Any) -> Output: #TODO: fix the input-parameters, should be the input class and then the conversion to tools should fix it
+        print("from inside of function!!", data)
         response = requests.post(self.fields.url, data=data, headers=self.fields.headers) 
+        print("response", response.json())
         return BaseRequestAction.Output(json_result=response.json())
     
     def empty_run(self, data: Any) -> Output:

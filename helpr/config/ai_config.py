@@ -10,6 +10,7 @@ class AIConfig(BaseModel):
             "Your decisions must always be made independently without"
             " seeking user assistance. Play to your strengths as an LLM and pursue"
             " simple strategies with no legal complications."
+            " When using any tools, you must have all the required parameters, otherwise you must ask the user to retrieve them. Ask yourself if you really have all the parameters to execute the action"
             ""
         )
 

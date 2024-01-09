@@ -1,6 +1,10 @@
 
 
 from pydantic import BaseModel
+from helpr.schemas.action import ActionSchema
+from helpr.schemas.action_run import ActionRunSchema
+
+from helpr.schemas.message import ActionRequestMessageSchema, ActionResultMessageSchema, BotMessageSchema, MessageSchema
 
 
 class BaseSocketMessage(BaseModel):
@@ -23,58 +27,62 @@ class BaseSocketServerMessage(BaseSocketMessage):
    pass
 
 
+class SocketServerChatMessage(BaseSocketServerMessage):
+    message: MessageSchema
+    
+    
+    def get_data(self):
+        return {'message': self.message.model_dump()}
+    
+    @staticmethod
+    def get_event():
+        raise NotImplementedError()
+
 
 #TODO: holy shit these look horrid
 class SocketServerMessageBotChat(BaseSocketServerMessage):
-    id: int
-    chat_session_id: int
-    text: str
-    class Data(BaseModel):
-        chat_session_id: int
-        text: str
+    message: BotMessageSchema
     
-    def get_data(self) -> Data.__dict__:
-        return {'id': self.id, 'chat_session_id': self.chat_session_id, 'text': self.text}
+          
+    def get_data(self):
+        return {'message': self.message.model_dump()}
+    
     
     @staticmethod
     def get_event():
         return "message_bot"
 
 class SocketServerMessageActionRequestChat(BaseSocketServerMessage):
-    id: int
-    text: str
-    chat_session_id: int
-    action_id: int
-    input: str
-
-    class Data(BaseModel):
-        text: str
-        chat_session_id: int
-        action_id: int
-        input: str
+    message: ActionRequestMessageSchema
     
-    def get_data(self) -> Data.__dict__:
-        return {'id': self.id, 'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'input': self.input}
+    
+    def get_data(self):
+        return {'message': self.message.model_dump()}
+    
     
     @staticmethod
     def get_event():
         return "message_action_request"
     
-class SocketServerMessageActionResultChat(BaseSocketServerMessage):
-    id: int
-    text: str
-    chat_session_id: int
-    action_id: int
-    output: str
 
-    class Data(BaseModel):
-        text: str
-        chat_session_id: int
-        action_id: int
-        output: str
+"""class SocketServerMessageActionRequestResponseChat(BaseSocketServerMessage):
+    message: ActionRequestResponseMessageSchema
     
-    def get_data(self) -> Data.__dict__:
-        return {'id': self.id, 'chat_session_id': self.chat_session_id, 'text': self.text, 'action_id': self.action_id, 'output': self.output}
+    def get_data(self):
+        return {'message': self.message.model_dump()}
+    
+    
+    @staticmethod
+    def get_event():
+        return "message_action_request_response"
+"""
+class SocketServerMessageActionResultChat(BaseSocketServerMessage):
+    message: ActionResultMessageSchema
+    
+    
+    def get_data(self):
+        return {'message': self.message.model_dump()}
+    
     
     @staticmethod
     def get_event():
@@ -82,4 +90,24 @@ class SocketServerMessageActionResultChat(BaseSocketServerMessage):
     
 
  
- 
+class SocketServerMessageActionRun(BaseSocketServerMessage):
+    action_run: ActionRunSchema
+    
+    def get_data(self):
+        return {'action_run': self.action_run.model_dump()}
+    
+    
+    @staticmethod
+    def get_event():
+        return "action_run"
+    
+class SocketServerMessageActionRunStatus(BaseSocketServerMessage):
+    action_run_id: int
+    status: str
+    
+    def get_data(self):
+        return {'status': self.status, 'action_run_id': self.action_run_id}
+    
+    @staticmethod
+    def get_event():
+        return "action_run_status"
