@@ -1,5 +1,4 @@
 from typing import List, Literal, Optional
-from click import Option
 from numpy import isin
 from pydantic import BaseModel
 from db.models.agent import DBAgent
@@ -10,6 +9,7 @@ from helpr.agent.chat_agent import ChatAgent
 from helpr.config.ai_config import AIConfig
 from helpr.messages.message_collection import MessageCollection
 from helpr.prompt_generator.base import PromptGenerator
+from helpr.utils.convert import base_model_to_json
 from .chat_agent_message import *
 from helpr.services.action import get_action_by_name_in_db, get_actions_in_chat
 from index.base import Index
@@ -55,14 +55,14 @@ class ChatSessionAgent(BaseModel):
                 db_action = await get_action_by_name_in_db(msg.action.name)
                 # TODO: text should be able to be None
                 # TODO: fix action_id
-                created_message = await self.message_collection.add_action_request_message(self.chat_session_id, action_request_dto.CreateActionRequest(action_id=db_action.id, input=msg.input.__str__(), response_id=None, action_run_id=None))
+                created_message = await self.message_collection.add_action_request_message(self.chat_session_id, action_request_dto.CreateActionRequest(action_id=db_action.id, input=base_model_to_json(msg.input), response_id=None, action_run_id=None))
                 created_messages.append(created_message)
             if isinstance(msg, ActionResultMessage):
                 # TODO: will change
                 db_action = await get_action_by_name_in_db(msg.action.name)
 
                 # TODO: fix action_id
-                created_message = await self.message_collection.add_action_result_message(message_dto.CreateActionResultMessage(text='', chat_session_id=self.chat_session_id, action_id=db_action.id, output=msg.output.__str__()))
+                created_message = await self.message_collection.add_action_result_message(message_dto.CreateActionResultMessage(text='', chat_session_id=self.chat_session_id, action_id=db_action.id, output=base_model_to_json(msg.output)))
                 created_messages.append(created_message)
             else:
                 pass

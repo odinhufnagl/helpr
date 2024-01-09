@@ -7,6 +7,7 @@ from openai import chat
 
 
 
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from helpr import schemas
 from time import sleep
@@ -16,18 +17,16 @@ from celery.signals import worker_ready, worker_init
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from dotenv import load_dotenv
-from agent.chat_agent import ChatAgent, ChatSessionAgent
+from agent.chat_agent import ChatAgent
 from db.models.agent import DBAgent
 from socket_components.message import SocketServerMessageActionRunStatus, SocketServerMessageBotChat
 from socket_components.message_queue import socket_message_queue
 from services.action_run import *
 from services.database import update
-
 from helpr.schemas.action_run import ActionRunStatus
-
-
+from helpr.agent.chat_session_agent import ChatSessionAgent
 import db
-from db.models import DBChatSession, DBChat
+
 # TODO: centralise dotenv fetch and so we can define to run with local or production
 load_dotenv()
 
