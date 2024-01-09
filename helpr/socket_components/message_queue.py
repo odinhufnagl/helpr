@@ -1,5 +1,6 @@
 
 from abc import ABC
+from http import server
 from re import S
 from typing import List
 from dotenv import load_dotenv
@@ -11,7 +12,7 @@ from .manager import CustomRedisManager
 import os
 from logger import logger
 load_dotenv()
-
+import json
 
 
 class BaseSocketMessageQueue(ABC):
@@ -31,11 +32,7 @@ class SocketMessageQueue():
     #TODO: pretty ugly and repetitive, the problem is probably connected to how we structure CustomRedisManager different session-lookups
     async def emit_to_client(self, server_msg: BaseSocketServerMessage, clients: List[str]):
             for client in clients:
-                logger.info("walla")
-                print("walla", client)
                 sids = await self.external_manager.get_client_sids(client)
-                logger.info(f"sids: {sids}")
-                print(f"sids: {sids}")
                 await self.emit(server_msg, sids)
                 
     async def emit_to_uid(self, server_msg: BaseSocketServerMessage, uids: List[str]):

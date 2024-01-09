@@ -30,8 +30,7 @@ class ActionSchema(BaseSchema):
     class Config:
         arbitrary_types_allowed = True
         
-    def from_model(model: DBAction):
-    
+    def from_model(model: Optional[DBAction]):
         if model.type == DBAction.Type.POST_REQUEST:
             return PostRequestActionSchema.from_model(model)
         if model.type == DBAction.Type.ADD:

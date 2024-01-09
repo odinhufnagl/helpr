@@ -3,3 +3,4 @@ from .user import UserSchema
 from .base import BaseSchema
 from .chat_session import ChatSessionSchema
 from .message import MessageSchema
+from .action_request import *

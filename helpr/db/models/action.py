@@ -49,9 +49,9 @@ class DBPostRequestAction(DBAction):
     __tablename__ = "post_request_action"
     id: Mapped[int] = mapped_column(ForeignKey("action.id"), primary_key=True)
     url_field_id: Mapped[int] = mapped_column(ForeignKey('field.id'))
-    url_field: Mapped[DBField] = relationship('DBField', foreign_keys=[url_field_id], lazy='immediate')
+    url_field: Mapped[DBField] = relationship('DBField', foreign_keys=[url_field_id], lazy='noload')
     headers_field_id: Mapped[int] = mapped_column(ForeignKey('field.id'))
-    headers_field: Mapped[DBField] = relationship('DBField', foreign_keys=[headers_field_id], lazy='immediate')
+    headers_field: Mapped[DBField] = relationship('DBField', foreign_keys=[headers_field_id], lazy='noload')
     body_input_struct: Mapped[Dict | None] = mapped_column(JSON, nullable=True)
     result_output_struct: Mapped[Dict | None] = mapped_column(JSON, nullable=True)    
     __mapper_args__ = {

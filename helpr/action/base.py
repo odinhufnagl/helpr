@@ -6,6 +6,7 @@ import requests
 from sqlalchemy import desc, select
 from sqlalchemy.orm import selectinload
 from helpr import db
+
 from logger import logger
 from llama_index.tools import FunctionTool
 
@@ -52,6 +53,9 @@ class BaseAction(BaseModel, ABC):
         if schema.type == ActionSchema.Type.ADD:
             logger.info(f"{schema.name}, {schema.description}, {schema.feedback_required}")
             return AddAction(id=schema.id, name=schema.name, description=schema.description, feedback_required=schema.feedback_required)
+        if schema.type == ActionSchema.Type.POST_REQUEST:
+            from helpr.action.request.base import PostRequestAction
+            return PostRequestAction(id=schema.id, name=schema.name, description=schema.description, feedback_required=schema.feedback_required, fields=PostRequestAction.Fields(url=schema.url, headers=schema.headers))
     def to_tool(self):
         return (self.run, self.empty_run, self.name, self.description)
 
