@@ -29,4 +29,9 @@ async def get_actions_in_chat(chat_id: int) -> List[ActionSchema]:
     logger.info(f"actions: {actions}")
     return list(map(lambda m: ActionSchema.from_model(m), actions))
 
-
+# TODO: look over db structure, because this requires action-name to be unique which OBVIOUSLY is wrong. Or maybe not obvious but something has to change, perhaps the "name" of the action in the tools should be the id or something like that
+async def get_action_by_name_in_db(action_name: str) -> db.models.DBAction:
+    async with db.session() as session:
+        m = (await session.execute(select(db.models.DBAction).where(db.models.DBAction.name == action_name))).scalar_one_or_none()
+        await session.commit()
+    return m

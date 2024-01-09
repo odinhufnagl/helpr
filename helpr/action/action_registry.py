@@ -10,6 +10,9 @@ from helpr.logger import logger
 class ActionRegistry(BaseModel):
     actions: List[BaseAction] = []
     
+    def get_actions(self):
+        return self.actions
+    
     #TODO: from_schema functions should be defined in the actions I guess, or in some general place
     def register_schema(self, action_schema: ActionSchema) -> Optional[BaseAction]:
         new_action = None
